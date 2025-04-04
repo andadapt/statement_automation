@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Report for {{ report.product.name }}</h2>
+
+  <ul>
+    <li><strong>Portfolio:</strong> {{ report.portfolio.name }}</li>
+    <li><strong>Prepared By Date:</strong> {{ report.prepared_by_date }}</li>
+    <li><strong>Last Reviewed Date:</strong> {{ report.last_reviewed_date }}</li>
+    <li><strong>Last Tested Date:</strong> {{ report.last_tested_date }}</li>
+    <li><strong>Days Since Last Tested:</strong> {{ report.days_since_last_tested }}</li>
+    <li><strong>Tested By:</strong> {{ report.tested_by }}</li>
+    <li><strong>Compliance Status:</strong> {{ report.compliance_status }}</li>
+    <li><strong>WCAG:</strong> {{ report.wcag }}</li>
+    <li><strong>Feedback Header:</strong> {{ report.feedback_header }}</li>
+    <li><strong>Reporting Problems:</strong> {{ report.reporting_problems }}</li>
+    <li><strong>Enforcement Procedure:</strong> {{ report.enforcement_procedure }}</li>
+    <li><strong>Legal Compliance:</strong> {{ report.legal_compliance }}</li>
+    <li><strong>Technical Info Wording:</strong> {{ report.technical_information_wording }}</li>
+    <li><strong>Legal Wording Not Present:</strong> {{ report.legal_wording_not_present }}</li>
+    <li><strong>Feedback Email:</strong> {{ report.feedback_contact_email }}</li>
+    <li><strong>Feedback Phone:</strong> {{ report.feedback_contact_phone }}</li>
+    <li><strong>Problems Email:</strong> {{ report.reporting_problems_contact_email }}</li>
+    <li><strong>Problems Phone:</strong> {{ report.reporting_problems_contact_phone }}</li>
+    <li><strong>Non-accessible Content:</strong> {{ report.non_accessible_content }}</li>
+    <li><strong>Date Report Ran:</strong> {{ report.date_report_ran }}</li>
+  </ul>
+
+  <h3>History</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>User</th>
+        <th>Change Type</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for record in history %}
+        <tr>
+          <td>{{ record.history_date }}</td>
+          <td>{{ record.history_user }}</td>
+          <td>{{ record.get_history_type_display }}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="3">No history found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <p><a href="{% url 'compliance:report_list' %}">← Back to Reports</a></p>
+{% endblock %}

@@ -22,7 +22,11 @@
         <tbody>
             {% for report in reports %}
                 <tr>
-                    <td>{{ report.product.name }}</td>
+                    <td>
+                        <a href="{% url 'compliance:report_detail' report.pk %}">
+                            {{ report.product.name }}
+                        </a>
+                    </td>
                     <td>{{ report.portfolio.name }}</td>
                     <td>{{ report.compliance_status }}</td>
                     <td>{{ report.date_report_ran }}</td>

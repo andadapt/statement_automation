@@ -2,7 +2,10 @@ from django.shortcuts import render
 from django.views.generic import ListView
 import django_filters
 from .models import Report, Portfolio, Product  # <-- Make sure Portfolio and Product are imported
-
+from django.shortcuts import get_object_or_404
+from django.views.generic import DetailView
+from .models import Product
+from simple_history.utils import update_change_reason
 # Create a filter class using django-filter for easy filtering
 class ReportFilter(django_filters.FilterSet):
     portfolio = django_filters.ModelChoiceFilter(queryset=Portfolio.objects.all(), empty_label="All Portfolios", label="Portfolio")
@@ -32,4 +35,15 @@ class ReportListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filter'] = ReportFilter(self.request.GET, queryset=self.get_queryset())
+        return context
+
+class ReportDetailView(DetailView):
+    model = Report
+    template_name = 'compliance/report_detail.html'
+    context_object_name = 'report'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        report = self.get_object()
+        context['history'] = report.history.all()
         return context
