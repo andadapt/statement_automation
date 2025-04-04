@@ -60,7 +60,8 @@ ROOT_URLCONF = 'statementautomation.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [                    BASE_DIR / 'templates',  # This is where your templates folder is
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

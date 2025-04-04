@@ -1,0 +1,26 @@
+<!-- base_generic.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Site{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/">Home</a>
+            <a href="{% url 'compliance:report_list' %}">Reports</a>
+        </nav>
+    </header>
+
+    <div class="content">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <footer>
+        <p>&copy; 2025 My Site</p>
+    </footer>
+</body>
+</html>
