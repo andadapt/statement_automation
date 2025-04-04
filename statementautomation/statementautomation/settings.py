@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'simple_history',
     'compliance',
     'import_export',
+    'django_filters',
     
 ]
 

@@ -1,13 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reports</title>
-</head>
-<body>
-    <h1>All Reports</h1>
+{% extends "base.html" %}
 
+{% block content %}
+    <h2>Reports</h2>
+
+    <!-- Filter Form -->
+    <form method="get">
+        {{ filter.form.as_p }}
+        <button type="submit">Filter</button>
+    </form>
+
+    <!-- Table of Reports -->
     <table>
         <thead>
             <tr>
@@ -27,28 +29,25 @@
                 </tr>
             {% empty %}
                 <tr>
-                    <td colspan="4">No reports available.</td>
+                    <td colspan="4">No reports found.</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    {% if is_paginated %}
-        <div class="pagination">
-            <span class="step-links">
-                {% if reports.has_previous %}
-                    <a href="?page=1">&laquo; first</a>
-                    <a href="?page={{ reports.previous_page_number }}">previous</a>
-                {% endif %}
-                <span class="current">
-                    Page {{ reports.number }} of {{ reports.paginator.num_pages }}.
-                </span>
-                {% if reports.has_next %}
-                    <a href="?page={{ reports.next_page_number }}">next</a>
-                    <a href="?page={{ reports.paginator.num_pages }}">last &raquo;</a>
-                {% endif %}
-            </span>
-        </div>
-    {% endif %}
-</body>
-</html>
+    <!-- Pagination Links -->
+    <div>
+        {% if reports.has_previous %}
+            <a href="?page=1&{{ request.GET.urlencode }}">First</a>
+            <a href="?page={{ reports.previous_page_number }}&{{ request.GET.urlencode }}">Previous</a>
+        {% endif %}
+
+        <span>Page {{ reports.number }} of {{ reports.paginator.num_pages }}</span>
+
+        {% if reports.has_next %}
+            <a href="?page={{ reports.next_page_number }}&{{ request.GET.urlencode }}">Next</a>
+            <a href="?page={{ reports.paginator.num_pages }}&{{ request.GET.urlencode }}">Last</a>
+        {% endif %}
+    </div>
+
+{% endblock %}

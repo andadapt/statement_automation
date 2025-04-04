@@ -1,4 +1,4 @@
-<!-- templates/base_generic.html -->
+<!-- base_generic.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,11 +8,19 @@
 </head>
 <body>
     <header>
-        <h1>My Site</h1>
+        <nav>
+            <a href="/">Home</a>
+            <a href="{% url 'compliance:report_list' %}">Reports</a>
+        </nav>
     </header>
-    <main>
+
+    <div class="content">
         {% block content %}
         {% endblock %}
-    </main>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 My Site</p>
+    </footer>
 </body>
 </html>
