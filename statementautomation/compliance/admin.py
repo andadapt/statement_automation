@@ -5,6 +5,9 @@ from import_export.admin import ImportExportModelAdmin  # Use ImportExportModelA
 
 from .models import Portfolio, Product, Report
 
+admin.site.site_title = 'Accessibility assurance'
+admin.site.site_header = 'Accessibility assurance'
+admin.site.index_title = 'Accessibility assurance admin'
 # Create a Resource class for Product model (handles import/export functionality)
 class ProductResource(resources.ModelResource):
     class Meta:
