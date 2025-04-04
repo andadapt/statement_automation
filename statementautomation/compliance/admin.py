@@ -2,8 +2,18 @@ from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin  # Use ImportExportModelAdmin
+from django.contrib.admin import AdminSite
 
 from .models import Portfolio, Product, Report
+
+# Create a custom admin site class to modify admin panel titles
+class MyAdminSite(AdminSite):
+    site_header = 'Accessibility Assurance Admin'  # Custom header
+    site_title = 'Accessibility Assurance'  # Custom title in the browser tab
+    index_title = 'Welcome to the Accessibility Assurance Admin Panel'  # Custom index title
+
+# Register the custom admin site
+admin.site = MyAdminSite()
 
 # Create a Resource class for Product model (handles import/export functionality)
 class ProductResource(resources.ModelResource):
