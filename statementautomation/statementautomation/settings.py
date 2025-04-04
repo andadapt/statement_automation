@@ -25,7 +25,15 @@ SECRET_KEY = 'django-insecure-%#tr$(v7cy#%a*@tp_!j4dee56k-p7=6=n^qu-pjp76##n65c4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+
+    'longer-bedford-bulgarian-brief.trycloudflare.com',
+    '127.0.0.1'
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://longer-bedford-bulgarian-brief.trycloudflare.com',
+]
 
 
 # Application definition
