@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'compliance',
     'import_export',
     'django_filters',
+    'django_tables2',
     
 ]
 

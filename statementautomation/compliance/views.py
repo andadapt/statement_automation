@@ -6,36 +6,21 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import DetailView
 from .models import Product
 from simple_history.utils import update_change_reason
-# Create a filter class using django-filter for easy filtering
-class ReportFilter(django_filters.FilterSet):
-    portfolio = django_filters.ModelChoiceFilter(queryset=Portfolio.objects.all(), empty_label="All Portfolios", label="Portfolio")
-    product = django_filters.ModelChoiceFilter(queryset=Product.objects.all(), empty_label="All Products", label="Product")
-    date_report_ran = django_filters.DateFromToRangeFilter(label="Date Report Ran")
-    compliance_status = django_filters.CharFilter(lookup_expr='icontains', label="Compliance Status")
+from django_tables2.views import SingleTableMixin
+from django_filters.views import FilterView
+from .models import Report
+from .filters import ReportFilter
+from compliance.filters import ReportFilter  # now this works
+from .tables import ReportTable
 
-    class Meta:
-        model = Report
-        fields = ['portfolio', 'product', 'date_report_ran', 'compliance_status']
 
-# Report List View with Filtering and Sorting
-class ReportListView(ListView):
+class ReportListView(SingleTableMixin, FilterView):
     model = Report
-    template_name = 'report_list.html'  # Template for displaying reports
-    context_object_name = 'reports'
-    paginate_by = 10  # Number of reports per page
-    
-    # Set default ordering to product name
-    ordering = ['product__name']
-
-    def get_queryset(self):
-        queryset = Report.objects.all()
-        filter = ReportFilter(self.request.GET, queryset=queryset)
-        return filter.qs
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['filter'] = ReportFilter(self.request.GET, queryset=self.get_queryset())
-        return context
+    table_class = ReportTable
+    template_name = "compliance/report_list.html"
+    context_object_name = "reports"
+    filterset_class = ReportFilter
+    paginate_by = 10
 
 class ReportDetailView(DetailView):
     model = Report

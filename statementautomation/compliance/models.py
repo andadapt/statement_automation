@@ -1,6 +1,6 @@
 from django.db import models
 from simple_history.models import HistoricalRecords
-
+from django.urls import reverse
 class Portfolio(models.Model):
     name = models.CharField(max_length=255, unique=True)
 
@@ -31,6 +31,9 @@ class Product(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.portfolio.name})"
+    
+    def get_absolute_url(self):
+        return reverse('compliance:product_detail', args=[str(self.pk)])
 
     class Meta:
         unique_together = ('name', 'portfolio')  # Enforces unique name per portfolio

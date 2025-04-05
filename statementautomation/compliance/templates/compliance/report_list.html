@@ -1,4 +1,6 @@
+{# report_list.html #}
 {% extends "base.html" %}
+{% load render_table from django_tables2 %}
 
 {% block content %}
     <h2>Reports</h2>
@@ -9,48 +11,21 @@
         <button type="submit">Filter</button>
     </form>
 
-    <!-- Table of Reports -->
-    <table>
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>Portfolio</th>
-                <th>Compliance Status</th>
-                <th>Date Report Ran</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for report in reports %}
-                <tr>
-                    <td>
-                        <a href="{% url 'compliance:report_detail' report.pk %}">
-                            {{ report.product.name }}
-                        </a>
-                    </td>
-                    <td>{{ report.portfolio.name }}</td>
-                    <td>{{ report.compliance_status }}</td>
-                    <td>{{ report.date_report_ran }}</td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="4">No reports found.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <!-- Render the table -->
+    {% render_table table %}
 
     <!-- Pagination Links -->
     <div>
-        {% if reports.has_previous %}
+        {% if table.page.has_previous %}
             <a href="?page=1&{{ request.GET.urlencode }}">First</a>
-            <a href="?page={{ reports.previous_page_number }}&{{ request.GET.urlencode }}">Previous</a>
+            <a href="?page={{ table.page.previous_page_number }}&{{ request.GET.urlencode }}">Previous</a>
         {% endif %}
 
-        <span>Page {{ reports.number }} of {{ reports.paginator.num_pages }}</span>
+        <span>Page {{ table.page.number }} of {{ table.page.paginator.num_pages }}</span>
 
-        {% if reports.has_next %}
-            <a href="?page={{ reports.next_page_number }}&{{ request.GET.urlencode }}">Next</a>
-            <a href="?page={{ reports.paginator.num_pages }}&{{ request.GET.urlencode }}">Last</a>
+        {% if table.page.has_next %}
+            <a href="?page={{ table.page.next_page_number }}&{{ request.GET.urlencode }}">Next</a>
+            <a href="?page={{ table.page.paginator.num_pages }}&{{ request.GET.urlencode }}">Last</a>
         {% endif %}
     </div>
 
