@@ -24,11 +24,14 @@ class ReportListView(SingleTableMixin, FilterView):
 
 class ReportDetailView(DetailView):
     model = Report
-    template_name = 'compliance/report_detail.html'
-    context_object_name = 'report'
+    template_name = 'compliance/report_detail.html'  # Path to your detail template
+    context_object_name = 'report'  # The object will be referred to as 'report' in the template
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         report = self.get_object()
+
+        # Adding report history to the context
         context['history'] = report.history.all()
+        
         return context
