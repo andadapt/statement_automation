@@ -26,12 +26,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
 
-    'longer-bedford-bulgarian-brief.trycloudflare.com',
+    'bangkok-hostels-slowly-gender.trycloudflare.com',
     '127.0.0.1'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    'https://longer-bedford-bulgarian-brief.trycloudflare.com',
+    'https://bangkok-hostels-slowly-gender.trycloudflare.com',
 ]
 
 
