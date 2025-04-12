@@ -4,7 +4,7 @@ from django.urls import reverse
 from datetime import timedelta, date
 class Portfolio(models.Model):
     name = models.CharField(max_length=255, unique=True)
-
+    description = models.TextField(blank=True, null=True)  # <-- new field
     def __str__(self):
         return self.name
 
@@ -22,7 +22,7 @@ class Product(models.Model):
     statement_url = models.URLField(blank=True, null=True)  # Optional
     product_owner_name = models.CharField(max_length=255, blank=True, null=True)  # Optional
     product_owner_email = models.EmailField(blank=True, null=True)  # Optional, must be valid email
-    url_status = models.CharField(
+    statement_url_status = models.CharField(
         max_length=20,
         choices=URL_STATUS_CHOICES,
         default='missing',
@@ -45,7 +45,7 @@ class Report(models.Model):
     prepared_by_date = models.DateField(blank=True, null=True)
     last_reviewed_date = models.DateField(blank=True, null=True)
     last_tested_date = models.DateField(blank=True, null=True)
-    days_since_last_tested = models.IntegerField(blank=True, null=True)
+
     tested_by = models.CharField(max_length=255, blank=True, null=True)
 
     # Compliance Booleans
