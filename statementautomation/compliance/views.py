@@ -15,6 +15,9 @@ from import_export.formats.base_formats import CSV, XLSX
 from simple_history.utils import update_change_reason
 from django.contrib import messages
 import time
+from django.core.cache import cache
+from threading import Thread
+from time import time
 
 # View for listing reports
 class ReportListView(SingleTableMixin, FilterView):
@@ -100,16 +103,18 @@ class ProductListView(SingleTableMixin, FilterView):
     filterset_class = ProductFilter
     paginate_by = 10
 
-# Simple temporary store — you could upgrade to DB/session later
-last_report = {}
-
+# url checking code, using a simple temp store for results
 def run_url_check_task(user_id):
+    start = time()
+
     result = {
         'working': 0,
         'broken': 0,
         'missing': 0,
         'authentication': 0,
-        'total': 0
+        'total': 0,
+        'updated': 0,
+        'duration': 0.0
     }
 
     for product in Product.objects.all():
@@ -117,30 +122,27 @@ def run_url_check_task(user_id):
         if product.statement_url_status != new_status:
             product.statement_url_status = new_status
             product.save(update_fields=["statement_url_status"])
+            result['updated'] += 1
 
         result['total'] += 1
         result[new_status] += 1
 
-    # Save the result keyed by the user_id (for demo purposes)
-    last_report[user_id] = result
+    result['duration'] = round(time() - start, 2)
+    cache.set(f"url_check_report_{user_id}", result, timeout=300)
 
 def run_url_check(request):
     if request.method == 'POST':
-        user_id = str(request.user.id or 'anonymous')  # crude fallback
+        user_id = str(request.user.id or 'anonymous')
         thread = Thread(target=run_url_check_task, args=(user_id,))
         thread.start()
 
-        return JsonResponse({
-            'status': 'URL check started. This may take a moment.'
-        })
+        return JsonResponse({'status': 'URL check started. This may take a moment.'})
 
     return render(request, 'compliance/progress.html')
 
-
-# view for report at end
 def get_url_check_report(request):
     user_id = str(request.user.id or 'anonymous')
-    report = last_report.get(user_id)
+    report = cache.get(f"url_check_report_{user_id}")
     if report:
         return JsonResponse({'done': True, 'report': report})
     else:

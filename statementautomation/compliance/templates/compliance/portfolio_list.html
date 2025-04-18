@@ -2,11 +2,32 @@
 {% load django_tables2 %}
 
 {% block content %}
-<div class="container mt-4">
-  <h1 class="mb-4">Portfolios</h1>
+<div class="container mt-5">
+    <h1 class="title is-2 has-text-centered mb-5">📊 Portfolios</h1>
 
-  <div class="table-responsive">
-    {% render_table table %}
-  </div>
+    <div class="table-responsive">
+        <table class="table is-striped is-bordered is-hoverable is-fullwidth">
+            <thead>
+                <tr>
+                    <th class="has-text-centered">Portfolio Name</th>
+                    <th class="has-text-centered">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for portfolio in table %}
+                    <tr>
+                        <td>{{ portfolio.name }}</td>
+                        <td>
+                            <a class="button is-info is-small" href="{% url 'compliance:portfolio_detail' portfolio.id %}">View Details</a>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="2" class="has-text-centered">No portfolios available.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

@@ -1,28 +1,29 @@
-<!-- base_generic.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Accessibility Assurance {% endblock %}</title>
-
-        
+  {% load static %}  <!-- Load the static template tag -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Accessibility Assurance{% endblock %}</title>
+  
+  <!-- Correct link to Bulma CSS -->
+  <link rel="stylesheet" href="{% static '/css/bulma.css' %}">
 </head>
 <body>
-    <header>
-        <nav>
-            <a href="/">Home</a>
-            <a href="{% url 'compliance:report_list' %}">Reports</a>
-        </nav>
-    </header>
+  <header>
+    <nav>
+      <a href="/">Home</a>
+      <a href="{% url 'compliance:report_list' %}">Reports</a>
+    </nav>
+  </header>
 
-    <div class="content">
-        {% block content %}
-        {% endblock %}
-    </div>
+  <div class="content">
+    {% block content %}
+    {% endblock %}
+  </div>
 
-    <footer>
-        <p>&copy; 2025 Accessibility Assurance</p>
-    </footer>
+  <footer>
+    <p>&copy; 2025 Accessibility Assurance</p>
+  </footer>
 </body>
 </html>

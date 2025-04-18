@@ -1,32 +1,41 @@
-{# report_list.html #}
 {% extends "base.html" %}
 {% load render_table from django_tables2 %}
 
 {% block content %}
-    <h2>Reports</h2>
+<div class="container mt-5">
+    <h1 class="title is-2 has-text-centered mb-5">📊 Reports</h1>
 
     <!-- Filter Form -->
-    <form method="get">
+    <form method="get" class="box mb-5">
+        <h3 class="subtitle is-4 mb-3">Filter Reports</h3>
         {{ filter.form.as_p }}
-        <button type="submit">Filter</button>
+        <div class="field is-grouped">
+            <div class="control">
+                <button type="submit" class="button is-primary">Filter</button>
+            </div>
+        </div>
     </form>
 
     <!-- Render the table -->
-    {% render_table table %}
-
-    <!-- Pagination Links -->
-    <div>
-        {% if table.page.has_previous %}
-            <a href="?page=1&{{ request.GET.urlencode }}">First</a>
-            <a href="?page={{ table.page.previous_page_number }}&{{ request.GET.urlencode }}">Previous</a>
-        {% endif %}
-
-        <span>Page {{ table.page.number }} of {{ table.page.paginator.num_pages }}</span>
-
-        {% if table.page.has_next %}
-            <a href="?page={{ table.page.next_page_number }}&{{ request.GET.urlencode }}">Next</a>
-            <a href="?page={{ table.page.paginator.num_pages }}&{{ request.GET.urlencode }}">Last</a>
-        {% endif %}
+    <div class="table-container mb-5">
+        {% render_table table %}
     </div>
 
+    <!-- Pagination Links -->
+    <div class="pagination is-centered">
+        {% if table.page.has_previous %}
+            <a class="pagination-previous" href="?page=1&{{ request.GET.urlencode }}">First</a>
+            <a class="pagination-previous" href="?page={{ table.page.previous_page_number }}&{{ request.GET.urlencode }}">Previous</a>
+        {% endif %}
+
+        <span class="pagination-links">
+            Page {{ table.page.number }} of {{ table.page.paginator.num_pages }}
+        </span>
+
+        {% if table.page.has_next %}
+            <a class="pagination-next" href="?page={{ table.page.next_page_number }}&{{ request.GET.urlencode }}">Next</a>
+            <a class="pagination-next" href="?page={{ table.page.paginator.num_pages }}&{{ request.GET.urlencode }}">Last</a>
+        {% endif %}
+    </div>
+</div>
 {% endblock %}

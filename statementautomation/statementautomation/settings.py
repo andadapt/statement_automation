@@ -44,12 +44,14 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'django_simple_bulma',
     'django.contrib.staticfiles',
     'simple_history',
     'compliance',
     'import_export',
     'django_filters',
     'django_tables2',
+    
     
 ]
 
@@ -130,11 +132,64 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
+# Static files settings
+STATIC_URL = '/static/'
 
-STATIC_URL = 'static/'
+# Location where collectstatic will copy all static files
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# Optional: Additional static file directories (if you're using custom ones)
+# STATICFILES_DIRS = [
+#     BASE_DIR / 'your_custom_static_dir',
+# ]
+
+# Use WhiteNoise to serve compressed and cached static files (in production)
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# Static files finders
+STATICFILES_FINDERS = [
+    # Default static file finders
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+
+    # Add SimpleBulmaFinder to ensure Bulma assets are found by collectstatic
+    'django_simple_bulma.finders.SimpleBulmaFinder',
+]
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Custom settings for django-simple-bulma
+# Custom settings for django-simple-bulma
+BULMA_SETTINGS = {
+  "extensions": [
+    "all",  # Includes all Bulma extensions for flexibility
+    "bulma-calendar",
+  ],
+  "variables": {
+    # Vibrant and accessible color palette (WCAG AA compliant)
+    "primary": "#2563eb",         # Vibrant blue
+    "link": "#10b981",            # Emerald green
+    "info": "#3b82f6",            # Info blue
+    "success": "#22c55e",         # Lime green
+    "warning": "#f59e0b",         # Amber
+    "danger": "#ef4444",          # Red
+
+    # Background and contrast
+    "scheme-main": "#ffffff",     # Light background
+    "scheme-invert": "#111827",   # Deep gray/black for contrast
+
+    # Typography sizing
+    "size-1": "4rem",             # Slightly smaller than before for balance
+  },
+  "alt_variables": {
+    # Dark mode theme with strong contrast
+    "primary": "#ffffff",         # White for primary elements
+    "scheme-main": "#1e293b",     # Slate dark background
+    "scheme-invert": "#ffffff",   # Light text
+  },
+  "output_style": "compressed",  # Minify output for performance
+}

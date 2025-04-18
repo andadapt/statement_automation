@@ -2,36 +2,36 @@
 
 {% block content %}
   <div class="container">
-    <h1>Accessibility Assurance Dashboard</h1>
+    <h1 class="title is-2 has-text-centered">Accessibility Assurance Dashboard</h1>
 
     <div class="section">
-      <h2>Admin Panel</h2>
+      <h2 class="subtitle is-3">Admin Panel</h2>
       <p>
-        <a href="{% url 'admin:index' %}">Go to Admin Panel</a>
+        <a class="button is-link" href="{% url 'admin:index' %}">Go to Admin Panel</a>
       </p>
     </div>
 
     <div class="section">
-      <h2>Compliance Reports</h2>
+      <h2 class="subtitle is-3">Compliance Reports</h2>
       <p>
-        <a href="{% url 'compliance:report_list' %}">View Compliance Reports</a>
+        <a class="button is-link" href="{% url 'compliance:report_list' %}">View Compliance Reports</a>
       </p>
     </div>
 
     <div class="section">
-      <h2>All Products</h2>
+      <h2 class="subtitle is-3">All Products</h2>
       <p>
-        <a href="{% url 'compliance:all_products' %}">View All Products</a>
+        <a class="button is-link" href="{% url 'compliance:all_products' %}">View All Products</a>
       </p>
     </div>
 
     <div class="section">
-      <h2>Products by Portfolio</h2>
+      <h2 class="subtitle is-3">Products by Portfolio</h2>
       <ul>
         {% for portfolio in portfolios %}
           {% if portfolio.id %}
             <li>
-              <a href="{% url 'compliance:product_list' portfolio.id %}">{{ portfolio.name }} Product List</a>
+              <a class="button is-info" href="{% url 'compliance:product_list' portfolio.id %}">{{ portfolio.name }} Product List</a>
             </li>
           {% else %}
             <li>{{ portfolio.name }} (No ID)</li>
@@ -41,19 +41,17 @@
     </div>
 
     <div class="section">
-      <h2>All Portfolios</h2>
+      <h2 class="subtitle is-3">All Portfolios</h2>
       <p>
-        <a href="{% url 'compliance:portfolio_list' %}">View All Portfolios</a>
+        <a class="button is-link" href="{% url 'compliance:portfolio_list' %}">View All Portfolios</a>
       </p>
     </div>
 
-    
     <div class="section">
-      <h2>Tools & Management</h2>
+      <h2 class="subtitle is-3">Tools & Management</h2>
       <p>
-        <a href="{% url 'compliance:run_url_check' %}">Run URL Check</a>      </p>
+        <a class="button is-warning" href="{% url 'compliance:run_url_check' %}">Run URL Check</a>
+      </p>
     </div>
-
-
   </div>
 {% endblock %}
