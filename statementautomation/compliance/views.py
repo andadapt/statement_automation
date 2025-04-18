@@ -1,17 +1,20 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.http import JsonResponse
+from threading import Thread
 from django.views.generic import ListView, DetailView
 from django_tables2.views import SingleTableMixin
 from django_filters.views import FilterView
 from django.http import HttpResponse
 from django_tables2 import RequestConfig
-
+from .services.url_checker import check_statement_url
 from .models import Report, Portfolio, Product
 from .filters import ReportFilter, ProductFilter
 from .tables import ReportTable, ProductTable, PortfolioTable
 from .resources import ProductResource
 from import_export.formats.base_formats import CSV, XLSX
 from simple_history.utils import update_change_reason
-
+from django.contrib import messages
+import time
 
 # View for listing reports
 class ReportListView(SingleTableMixin, FilterView):
@@ -97,3 +100,24 @@ class ProductListView(SingleTableMixin, FilterView):
     filterset_class = ProductFilter
     paginate_by = 10
 
+# Background task
+def run_url_check_task():
+    for product in Product.objects.all():
+        new_status = check_statement_url(product)
+        if product.statement_url_status != new_status:
+            product.statement_url_status = new_status
+            product.save(update_fields=["statement_url_status"])
+
+# View to start the background task
+def run_url_check(request):
+    if request.method == 'POST':
+        # Start the task in a background thread
+        thread = Thread(target=run_url_check_task)
+        thread.start()
+
+        return JsonResponse({
+            'progress': 100,
+            'status': 'URL check has started in the background.'
+        })
+
+    return render(request, 'compliance/progress.html')

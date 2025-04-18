@@ -20,4 +20,7 @@ urlpatterns = [
     
     # Portfolio List View
     path("portfolios/", views.portfolio_list, name="portfolio_list"),
+
+    #tools for checking
+    path('run-url-check/', views.run_url_check, name='run_url_check'),
 ]

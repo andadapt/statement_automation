@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Running URL Check</h1>
+    <p id="status">Starting URL check in the background...</p>
+</div>
+
+<script>
+    fetch("{% url 'compliance:run_url_check' %}", {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('status').innerText = data.status;
+        setTimeout(() => {
+            window.location.href = "{% url 'index' %}";
+        }, 3000);
+    })
+    .catch(error => {
+        console.error("Error starting URL check:", error);
+        document.getElementById('status').innerText = "An error occurred.";
+    });
+</script>
+{% endblock %}
