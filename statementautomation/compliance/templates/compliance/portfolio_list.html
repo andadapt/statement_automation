@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% load django_tables2 %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-4">Portfolios</h1>
+
+  <div class="table-responsive">
+    {% render_table table %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load django_tables2 %}
+
+{% block content %}
+<div class="container mt-4">
+  <h1 class="mb-4">All Products</h1>
+
+  <form method="get" class="mb-4" role="search" aria-label="Filter products">
+    <div class="row">
+      {% for field in filter.form.visible_fields %}
+        <div class="col-md-4 mb-3">
+          <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+          {{ field }}
+        </div>
+      {% endfor %}
+    </div>
+    <button type="submit" class="btn btn-primary">Filter</button>
+  </form>
+
+  <!-- 🔽 Export Buttons -->
+  <div class="mb-4">
+    <a class="btn btn-secondary me-2" href="{% url 'compliance:product_export' 'csv' %}?{{ request.GET.urlencode }}">
+      Export to CSV
+    </a>
+    <a class="btn btn-secondary" href="{% url 'compliance:product_export' 'xlsx' %}?{{ request.GET.urlencode }}">
+      Export to Excel
+    </a>
+  </div>
+
+  <div class="table-responsive">
+    {% render_table table %}
+  </div>
+
+  <!-- Pagination Controls -->
+  <div class="d-flex justify-content-between mt-4">
+    <div>
+      {% if table.page.has_previous %}
+        <a href="?page=1&{{ request.GET.urlencode }}" class="btn btn-link">First</a>
+        <a href="?page={{ table.page.previous_page_number }}&{{ request.GET.urlencode }}" class="btn btn-link">Previous</a>
+      {% endif %}
+    </div>
+    <div>
+      {% if table.page.has_next %}
+        <a href="?page={{ table.page.next_page_number }}&{{ request.GET.urlencode }}" class="btn btn-link">Next</a>
+        <a href="?page={{ table.page.paginator.num_pages }}&{{ request.GET.urlencode }}" class="btn btn-link">Last</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
