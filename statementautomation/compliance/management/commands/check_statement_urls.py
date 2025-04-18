@@ -1,17 +1,31 @@
+from django.core.management.base import BaseCommand
+from compliance.models import Product
 import requests
 from bs4 import BeautifulSoup
-from django.core.management.base import BaseCommand
-from compliance .models import Product
 from requests.exceptions import RequestException, Timeout, ConnectionError, InvalidURL
 import logging
+
 
 class Command(BaseCommand):
     help = "Checks statement_url of all products and updates statement_url_status accordingly."
 
-    def handle(self, *args, **kwargs):
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--missing',
+            action='store_true',
+            help='Set all statement_url_status fields to "missing" for testing purposes.'
+        )
+
+    def handle(self, *args, **options):
+        if options['missing']:
+            self.stdout.write("🔧 Setting all statement_url_status fields to 'missing'...\n")
+            updated = Product.objects.all().update(statement_url_status='missing')
+            self.stdout.write(self.style.SUCCESS(f"✅ Set status to 'missing' for {updated} products."))
+            return
+
         products = Product.objects.all()
         total = products.count()
-        self.stdout.write(f"Checking statement URLs for {total} products...\n")
+        self.stdout.write(f"🔍 Checking statement URLs for {total} products...\n")
 
         for idx, product in enumerate(products, start=1):
             status = self.check_statement_url(product)
@@ -57,7 +71,6 @@ class Command(BaseCommand):
             return 'broken'
 
     def contains_login_elements(self, soup):
-        """Returns True if page has login fields."""
         inputs = soup.find_all('input')
         login_keywords = ['username', 'password', 'login', 'user', 'email']
 
@@ -67,9 +80,5 @@ class Command(BaseCommand):
             if any(keyword in name for keyword in login_keywords) or input_type == 'password':
                 return True
 
-        # Also check for login buttons or links
         login_text_matches = soup.find_all(text=lambda t: t and 'login' in t.lower())
-        if login_text_matches:
-            return True
-
-        return False
+        return bool(login_text_matches)
