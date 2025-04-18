@@ -100,24 +100,48 @@ class ProductListView(SingleTableMixin, FilterView):
     filterset_class = ProductFilter
     paginate_by = 10
 
-# Background task
-def run_url_check_task():
+# Simple temporary store — you could upgrade to DB/session later
+last_report = {}
+
+def run_url_check_task(user_id):
+    result = {
+        'working': 0,
+        'broken': 0,
+        'missing': 0,
+        'authentication': 0,
+        'total': 0
+    }
+
     for product in Product.objects.all():
         new_status = check_statement_url(product)
         if product.statement_url_status != new_status:
             product.statement_url_status = new_status
             product.save(update_fields=["statement_url_status"])
 
-# View to start the background task
+        result['total'] += 1
+        result[new_status] += 1
+
+    # Save the result keyed by the user_id (for demo purposes)
+    last_report[user_id] = result
+
 def run_url_check(request):
     if request.method == 'POST':
-        # Start the task in a background thread
-        thread = Thread(target=run_url_check_task)
+        user_id = str(request.user.id or 'anonymous')  # crude fallback
+        thread = Thread(target=run_url_check_task, args=(user_id,))
         thread.start()
 
         return JsonResponse({
-            'progress': 100,
-            'status': 'URL check has started in the background.'
+            'status': 'URL check started. This may take a moment.'
         })
 
     return render(request, 'compliance/progress.html')
+
+
+# view for report at end
+def get_url_check_report(request):
+    user_id = str(request.user.id or 'anonymous')
+    report = last_report.get(user_id)
+    if report:
+        return JsonResponse({'done': True, 'report': report})
+    else:
+        return JsonResponse({'done': False})

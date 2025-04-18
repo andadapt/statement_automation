@@ -23,4 +23,6 @@ urlpatterns = [
 
     #tools for checking
     path('run-url-check/', views.run_url_check, name='run_url_check'),
+    
+    path('url-check-report/', views.get_url_check_report, name='url_check_report'),
 ]
