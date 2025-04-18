@@ -3,6 +3,7 @@ from compliance.models import Product
 import requests
 from bs4 import BeautifulSoup
 from requests.exceptions import RequestException, Timeout, ConnectionError, InvalidURL
+from concurrent.futures import ThreadPoolExecutor, as_completed
 import logging
 
 
@@ -23,18 +24,33 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS(f"✅ Set status to 'missing' for {updated} products."))
             return
 
-        products = Product.objects.all()
-        total = products.count()
-        self.stdout.write(f"🔍 Checking statement URLs for {total} products...\n")
+        products = list(Product.objects.all())
+        total = len(products)
+        self.stdout.write(f"🔍 Checking statement URLs for {total} products using threading...\n")
 
-        for idx, product in enumerate(products, start=1):
-            status = self.check_statement_url(product)
-            if product.statement_url_status != status:
-                product.statement_url_status = status
-                product.save(update_fields=["statement_url_status"])
-            self.stdout.write(f"[{idx}/{total}] {product.name}: {status}")
+        max_workers = 10  # You can tweak this based on system resources
+
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_to_product = {
+                executor.submit(self.check_and_update_product, product): product for product in products
+            }
+
+            for idx, future in enumerate(as_completed(future_to_product), start=1):
+                product = future_to_product[future]
+                try:
+                    status = future.result()
+                    self.stdout.write(f"[{idx}/{total}] {product.name}: {status}")
+                except Exception as e:
+                    self.stdout.write(self.style.ERROR(f"[{idx}/{total}] {product.name}: error - {str(e)}"))
 
         self.stdout.write(self.style.SUCCESS("\n✅ Finished checking all products."))
+
+    def check_and_update_product(self, product):
+        status = self.check_statement_url(product)
+        if product.statement_url_status != status:
+            product.statement_url_status = status
+            product.save(update_fields=["statement_url_status"])
+        return status
 
     def check_statement_url(self, product):
         url = product.statement_url
@@ -80,5 +96,5 @@ class Command(BaseCommand):
             if any(keyword in name for keyword in login_keywords) or input_type == 'password':
                 return True
 
-        login_text_matches = soup.find_all(text=lambda t: t and 'login' in t.lower())
+        login_text_matches = soup.find_all(string=lambda t: t and 'login' in t.lower())
         return bool(login_text_matches)
